@@ -2,7 +2,8 @@
 #include <vector>
 #include <cmath>
 
-std::vector<std::vector<float>> points = {
+// enter point in this format, because use traversal from-point-to-point for draw line
+const std::vector<std::vector<float>> points = {
         //X     Y       Z
         {100,   0,      0},
         {100,   100,    0},
@@ -27,17 +28,21 @@ std::vector<std::vector<float>> points = {
         {0,     0,      100}
 };
 
-std::vector<std::vector<float>> basis = {
+// start basis
+const std::vector<std::vector<float>> basis = {
         {1, 0, 0},
         {0, 1, 0},
         {0, 0, 1}
 };
 
+// size window
 float sizeX = 1000;
 float sizeY = 1000;
 
+// imaginary distance between figure and point (0, 0, 0)
 float dist = 1000;
 
+// function for rotate on axel abscissa
 std::vector<std::vector<float>> rotateAbs(float angle){
     float sinFI = sinf(angle * M_PI / 180);
     float cosFI = cosf(angle * M_PI / 180);
@@ -47,6 +52,7 @@ std::vector<std::vector<float>> rotateAbs(float angle){
             {0, 0, 0, 1}};
 }
 
+// function for rotate on axel ordinate
 std::vector<std::vector<float>> rotateOrd(float angle){
     float sinFI = sinf(angle * M_PI / 180);
     float cosFI = cosf(angle * M_PI / 180);
@@ -58,6 +64,7 @@ std::vector<std::vector<float>> rotateOrd(float angle){
     };
 }
 
+// function for rotate on axel applicate
 std::vector<std::vector<float>> rotateApp(float angle){
     float sinFI = sinf(angle * M_PI / 180);
     float cosFI = cosf(angle * M_PI / 180);
@@ -69,10 +76,15 @@ std::vector<std::vector<float>> rotateApp(float angle){
     };
 }
 
-
+// multiply vector by matrix
+// vector.size() should be less matrix.size()
 std::vector<float> multVecOnMatrix(std::vector<float>v, std::vector<std::vector<float>> m){
     std::vector<float> res;
-    v.push_back(1);
+    int count = 0;
+    while(v.size() < m.size()){
+        v.push_back(1);
+        count++;
+    }
     for(int i = 0; i < m.size(); i++){
         float temp = 0;
         for(int j = 0; j < m.size(); j++){
@@ -80,13 +92,21 @@ std::vector<float> multVecOnMatrix(std::vector<float>v, std::vector<std::vector<
         }
         res.push_back(temp);
     }
-    res.pop_back();
+    while(count--){
+        res.pop_back();
+    }
     return res;
 }
 
+// multiply matrix by vector
+// vector.size() should be less matrix.size()
 std::vector<float> multMatrixOnVec(std::vector<std::vector<float>> m, std::vector<float>v){
     std::vector<float> res;
-    v.push_back(1);
+    int count = 0;
+    while(v.size() < m.size()){
+        v.push_back(1);
+        count++;
+    }
     for(int i = 0; i < m.size(); i++){
         float temp = 0;
         for(int j = 0; j < m.size(); j++){
@@ -94,15 +114,18 @@ std::vector<float> multMatrixOnVec(std::vector<std::vector<float>> m, std::vecto
         }
         res.push_back(temp);
     }
-    res.pop_back();
+    while(count--){
+        res.pop_back();
+    }
     return res;
 }
 
+// convert vector3 to vector2 with depth
 std::vector<std::vector<float>> convert3Dto2D(std::vector<std::vector<float>> input){
     std::vector<std::vector<float>> result;
-    for(int i = 0; i < input.size(); i++){
-        float mX = sizeX / 2 + input[i][0] * dist / (input[i][3] + dist);
-        float mY = sizeY / 2 + input[i][1] * dist / (input[i][3] + dist);
+    for(auto & i : input){
+        float mX = sizeX / 2 + i[0] * dist / (i[3] + dist);
+        float mY = sizeY / 2 + i[1] * dist / (i[3] + dist);
         result.push_back(std::vector<float>({mX, mY}));
     }
     return result;
@@ -114,11 +137,20 @@ std::vector<std::vector<float>> inverseMatrix(std::vector<std::vector<float>> ma
                          matrix[2][0], matrix[2][1], matrix[2][2]);
 
     sf::Transform inverse = source.getInverse();
-    float *r = (float*)inverse.getMatrix();
+    auto *r = inverse.getMatrix();
     std::vector<float> revers(r, r+16);
 
     std::vector<std::vector<float>> ret;
 
+    /*
+     * Transform insert line and row with only 1 between second and third line/row
+     * 1 1 1        \       1 1 0 1
+     * 2 2 2    ------      2 2 0 2
+     * 3 3 3        /       0 0 1 0
+     *                      3 3 0 3
+     *
+     * after inverse need delete this line and row
+     */
     for(int i = 0; i < 4; i++){
         if(i == 2) continue;
         std::vector<float> temp;
@@ -141,29 +173,33 @@ int main()
 
     while (window.isOpen())
     {
-        sf::Event event;
+        sf::Event event{};
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
 
+        // new basis for transform figure
         std::vector<std::vector<float>> newBasis;
-
-        for(int i = 0; i < basis.size(); i++){
-            newBasis.push_back(multMatrixOnVec(rotateAbs(t), basis[i]));
+        // add new coordinates new basis
+        for(auto & i : basis){
+            newBasis.push_back(multMatrixOnVec(rotateAbs(t), i));
         }
 
+        // inverse matrix
         std::vector<std::vector<float>> inverseNewBasis = inverseMatrix(newBasis);
 
+        // coordinates in new basis
         std::vector<std::vector<float>> inNewBasis;
-
-        for(int i = 0; i < points.size(); i++){
-            inNewBasis.push_back(multMatrixOnVec(inverseNewBasis, points[i]));
+        for(auto & point : points){
+            inNewBasis.push_back(multMatrixOnVec(inverseNewBasis, point));
         }
 
+        // transform vector3 to vector2
         inNewBasis = convert3Dto2D(inNewBasis);
 
+        // increment for testng :)
         t += 0.03;
 
         window.clear();
