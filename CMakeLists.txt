@@ -10,5 +10,5 @@ find_package(SFML 2.5.1 COMPONENTS system graphics audio network REQUIRED)
 
 include_directories(E:/SFML/SFML-2.5.1-mingw-64/include)
 
-add_executable(laba1graphs main.cpp)
+add_executable(laba1graphs main.cpp FigureModel.cpp FigureModel.h GraphController.cpp GraphController.h SFMLView.cpp SFMLView.h)
 target_link_libraries(laba1graphs sfml-graphics sfml-audio)
