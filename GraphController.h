@@ -33,16 +33,17 @@ public:
     std::vector<float> multMatrixOnVec(std::vector<std::vector<float>> m, std::vector<float>v);
 
     // function for rotate on axel applicate
-    std::vector<std::vector<float>> rotateApp(float angle);
+    void rotateApp(float angle);
 
     // function for rotate on axel abscissa
-    void rotateAbs(bool sign);
+    void rotateAbs(float angle);
 
     // function for rotate on axel ordinate
-    std::vector<std::vector<float>> rotateOrd(float angle);
+    void rotateOrd(float angle);
 
-    inline void newBasisClear(){
+    inline void reload(){
         newBasis = model->basis;
+        buffer = model->points;
     }
 };
 

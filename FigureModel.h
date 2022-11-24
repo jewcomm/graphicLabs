@@ -11,7 +11,7 @@
 class FigureModel {
 public:
     // enter point in this format, because use traversal from-point-to-point for draw line
-    std::vector<std::vector<float>> points = {
+    std::vector<std::vector<float>> figure = {
             //X     Y       Z
             {100,   0,      0},
             {100,   100,    0},
@@ -36,6 +36,8 @@ public:
             {0,     0,      100}
     };
 
+    std::vector<std::vector<float>> points;
+
     // start basis
     std::vector<std::vector<float>> basis = {
             {1, 0, 0},
@@ -48,6 +50,10 @@ public:
 
     float sizeX = 1000;
     float sizeY = 1000;
+
+    float xMax = 0;
+    float yMax = 0;
+    float zMax = 0;
 
     FigureModel();
 };

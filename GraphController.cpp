@@ -10,16 +10,40 @@ GraphController::GraphController(FigureModel *_model) {
     buffer = model->points;
 }
 
-void GraphController::rotateAbs(bool sign) {
-    absAngle += sign ? 0.05 : -0.05;
+void GraphController::rotateAbs(float angle) {
+    if(abs(angle) > 360) angle = fmod(angle , 360);
 
-    float sinFI = sinf(absAngle * M_PI / 180);
-    float cosFI = cosf(absAngle * M_PI / 180);
-    std::vector<std::vector<float>> r = {{1, 0,         0,     1},
+    float sinFI = sinf(angle * M_PI / 180);
+    float cosFI = cosf(angle * M_PI / 180);
+    std::vector<std::vector<float>> r = {{1, 0,         0,     0},
                                          {0, cosFI,     sinFI, 0},
                                          {0, 0 - sinFI, cosFI, 0},
                                          {0, 0,         0,     1}};
 
+    for (auto & i : newBasis) {
+        //i = multMatrixOnVec(r, i);
+        i = multVecOnMatrix(i, r);
+    }
+    //newBasis = inverseMatrix(newBasis);
+    for(auto & i: buffer){
+        i = multVecOnMatrix(i, newBasis);
+//        i = multMatrixOnVec(newBasis, i);
+    }
+}
+
+void GraphController::rotateOrd(float angle){
+    if(abs(angle) > 360) angle = fmod(angle , 360);
+
+    float sinFI = sinf(angle * M_PI / 180);
+    float cosFI = cosf(angle * M_PI / 180);
+    std::vector<std::vector<float>> r = {{cosFI, sinFI, 0, 0},
+                                        {0-sinFI, cosFI, 0, 0},
+                                        {0, 0, 1, 0},
+                                        {0, 0, 0, 1}};
+
+//    for(auto & i: buffer){
+//        i = multVecOnMatrix(i, r);
+//    }
     for (auto & i : newBasis) {
         i = multMatrixOnVec(r, i);
     }
@@ -29,26 +53,24 @@ void GraphController::rotateAbs(bool sign) {
     }
 }
 
-std::vector<std::vector<float>> GraphController::rotateOrd(float angle){
-    float sinFI = sinf(angle * M_PI / 180);
-    float cosFI = cosf(angle * M_PI / 180);
-    return {
-            {cosFI, sinFI, 0, 0},
-            {0-sinFI, cosFI, 0, 0},
-            {0, 0, 1, 0},
-            {0, 0, 0, 1}
-    };
-}
+void GraphController::rotateApp(float angle){
+    if(abs(angle) > 360) angle = fmod(angle , 360);
 
-std::vector<std::vector<float>> GraphController::rotateApp(float angle){
     float sinFI = sinf(angle * M_PI / 180);
     float cosFI = cosf(angle * M_PI / 180);
-    return {
-            {cosFI, 0, 0-sinFI, 0},
-            {0, 1, 0, 0},
-            {sinFI, 0, cosFI, 0},
-            {0, 0, 0, 1}
-    };
+    std::vector<std::vector<float>> r = {{cosFI, 0, 0-sinFI, 0},
+                                        {0, 1, 0, 0},
+                                        {sinFI, 0, cosFI, 0},
+                                        {0, 0, 0, 1}};
+
+    for (auto & i : newBasis) {
+        i = multMatrixOnVec(r, i);
+    }
+    newBasis = inverseMatrix(newBasis);
+    for(auto & i: buffer){
+        i = multMatrixOnVec(newBasis, i);
+    }
+
 }
 
 std::vector<float> GraphController::multVecOnMatrix(std::vector<float>v, std::vector<std::vector<float>> m){
@@ -58,13 +80,22 @@ std::vector<float> GraphController::multVecOnMatrix(std::vector<float>v, std::ve
         v.push_back(1);
         count++;
     }
-    for(int i = 0; i < m.size(); i++){
-        float temp = 0;
+
+    for(int i =0; i < v.size(); i++){
+        float t = 0;
         for(int j = 0; j < m.size(); j++){
-            temp += m[i][j] * v[j];
+            t += v[j] * m[j][i];
         }
-        res.push_back(temp);
+        res.push_back(t);
     }
+
+//    for(int i = 0; i < m.size(); i++){
+//        float temp = 0;
+//        for(int j = 0; j < m.size(); j++){
+//            temp += m[i][j] * v[j];
+//        }
+//        res.push_back(temp);
+//    }
     while(count--){
         res.pop_back();
     }
