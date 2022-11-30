@@ -15,6 +15,8 @@ public:
     GraphController *controller;
     SFMLView(GraphController *controller);
     int run();
+
+private:
 };
 
 

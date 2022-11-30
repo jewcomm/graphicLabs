@@ -21,17 +21,11 @@ void GraphController::rotateAbs(float angle) {
                                          {0, 0,         0,     1}};
 
     for (auto & i : newBasis) {
-        //i = multMatrixOnVec(r, i);
         i = multVecOnMatrix(i, r);
-    }
-    //newBasis = inverseMatrix(newBasis);
-    for(auto & i: buffer){
-        i = multVecOnMatrix(i, newBasis);
-//        i = multMatrixOnVec(newBasis, i);
     }
 }
 
-void GraphController::rotateOrd(float angle){
+void GraphController::rotateApp(float angle){
     if(abs(angle) > 360) angle = fmod(angle , 360);
 
     float sinFI = sinf(angle * M_PI / 180);
@@ -41,19 +35,12 @@ void GraphController::rotateOrd(float angle){
                                         {0, 0, 1, 0},
                                         {0, 0, 0, 1}};
 
-//    for(auto & i: buffer){
-//        i = multVecOnMatrix(i, r);
-//    }
     for (auto & i : newBasis) {
-        i = multMatrixOnVec(r, i);
-    }
-    newBasis = inverseMatrix(newBasis);
-    for(auto & i: buffer){
-        i = multMatrixOnVec(newBasis, i);
+        i = multVecOnMatrix(i, r);
     }
 }
 
-void GraphController::rotateApp(float angle){
+void GraphController::rotateOrd(float angle){
     if(abs(angle) > 360) angle = fmod(angle , 360);
 
     float sinFI = sinf(angle * M_PI / 180);
@@ -64,13 +51,8 @@ void GraphController::rotateApp(float angle){
                                         {0, 0, 0, 1}};
 
     for (auto & i : newBasis) {
-        i = multMatrixOnVec(r, i);
+        i = multVecOnMatrix(i, r);
     }
-    newBasis = inverseMatrix(newBasis);
-    for(auto & i: buffer){
-        i = multMatrixOnVec(newBasis, i);
-    }
-
 }
 
 std::vector<float> GraphController::multVecOnMatrix(std::vector<float>v, std::vector<std::vector<float>> m){
@@ -89,13 +71,6 @@ std::vector<float> GraphController::multVecOnMatrix(std::vector<float>v, std::ve
         res.push_back(t);
     }
 
-//    for(int i = 0; i < m.size(); i++){
-//        float temp = 0;
-//        for(int j = 0; j < m.size(); j++){
-//            temp += m[i][j] * v[j];
-//        }
-//        res.push_back(temp);
-//    }
     while(count--){
         res.pop_back();
     }
