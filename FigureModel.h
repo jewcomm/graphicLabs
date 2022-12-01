@@ -38,13 +38,6 @@ public:
 
     std::vector<std::vector<float>> points;
 
-    // start basis
-    std::vector<std::vector<float>> basis = {
-            {1, 0, 0},
-            {0, 1, 0},
-            {0, 0, 1}
-    };
-
     // imaginary distance between figure and point (0, 0, 0)
     float dist = 1000;
 
@@ -55,7 +48,22 @@ public:
     float yMax = 0;
     float zMax = 0;
 
+    float rX = 0;
+    float rY = 0;
+    float rZ = 0;
+
+    float kX = 1;
+    float kY = 1;
+    float kZ = 1;
+
     FigureModel();
+
+// start basis
+std::vector<std::vector<float>> basis = {
+        {1, 0, 0},
+        {0, 1, 0},
+        {0, 0, 1}
+};
 };
 
 

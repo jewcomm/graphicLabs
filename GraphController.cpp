@@ -55,6 +55,50 @@ void GraphController::rotateOrd(float angle){
     }
 }
 
+void GraphController::comprStret(float a, float b, float c) {
+    std::vector<std::vector<float>> r = {{a, 0, 0, 0},
+                                         {0, b, 0, 0},
+                                         {0, 0, c, 0},
+                                         {0, 0, 0, 1}};
+
+    for (auto & i: newBasis) {
+        i = multVecOnMatrix(i, r);
+    }
+}
+
+void GraphController::inverseXOY() {
+    std::vector<std::vector<float>> r = {{1, 0, 0, 0},
+                                         {0, 1, 0, 0},
+                                         {0, 0, 0-1, 0},
+                                         {0, 0, 0, 1}};
+
+    for (auto & i : newBasis) {
+        i = multVecOnMatrix(i, r);
+    }
+}
+
+void GraphController::inverseYOZ() {
+    std::vector<std::vector<float>> r = {{0-1, 0, 0, 0},
+                                         {0, 1, 0, 0},
+                                         {0, 0, 0, 0},
+                                         {0, 0, 0, 1}};
+
+    for (auto & i : newBasis) {
+        i = multVecOnMatrix(i, r);
+    }
+}
+
+void GraphController::inverseZOX() {
+    std::vector<std::vector<float>> r = {{1, 0, 0, 0},
+                                         {0, 0-1, 0, 0},
+                                         {0, 0, 1, 0},
+                                         {0, 0, 0, 1}};
+
+    for (auto & i : newBasis) {
+        i = multVecOnMatrix(i, r);
+    }
+}
+
 std::vector<float> GraphController::multVecOnMatrix(std::vector<float>v, std::vector<std::vector<float>> m){
     std::vector<float> res;
     int count = 0;

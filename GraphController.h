@@ -9,16 +9,14 @@
 #include <SFML/Graphics.hpp>
 #include "FigureModel.h"
 
-class GraphController {
-    float absAngle = 0;
-
-
+class GraphController : protected FigureModel {
 public:
     GraphController(FigureModel *_model);
-    FigureModel *model ;
 
     std::vector<std::vector<float>> buffer;
     std::vector<std::vector<float>> newBasis;
+
+    FigureModel *model ;
 
     std::vector<std::vector<float>> inverseMatrix(std::vector<std::vector<float>> matrix);
 
@@ -40,6 +38,14 @@ public:
 
     // function for rotate on axel ordinate
     void rotateOrd(float angle);
+
+    void comprStret(float a, float b, float c);
+
+    void inverseXOY();
+
+    void inverseYOZ();
+
+    void inverseZOX();
 
     inline void reload(){
         newBasis = model->basis;

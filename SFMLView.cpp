@@ -15,6 +15,11 @@ int SFMLView::run() {
     float z = 0;
     float x = 0;
     float y = 0;
+
+    float a = 1;
+    float b = 1;
+    float c = 1;
+
     bool showAxis = false;
 
     while (window.isOpen()){
@@ -27,16 +32,25 @@ int SFMLView::run() {
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)){
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::X)) x -= 0.5;
-            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) y -= 0.5;
-            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) z -= 0.5;
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) y -= 0.5;
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) z -= 0.5;
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) a /= 1.001;
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::B)) b /= 1.001;
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::C)) c /= 1.001;
         }
         else {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) x += 0.5;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) y += 0.5;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) z += 0.5;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) a *= 1.001;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) b *= 1.001;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) c *= 1.001;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)) {
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) x = y = z = 0;
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)){
+                x = y = z = 0;
+                a = b = c = 1;
+            }
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
                 showAxis = !showAxis;
             }
@@ -46,6 +60,7 @@ int SFMLView::run() {
         controller->rotateApp(z);
         controller->rotateOrd(y);
         controller->rotateAbs(x);
+        controller->comprStret(a, b, c);
 
         for (auto & i: controller->buffer){
             i = controller->multVecOnMatrix(i, controller->newBasis);

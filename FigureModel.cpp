@@ -6,9 +6,6 @@
 
 FigureModel::FigureModel() {
     // found center our figure
-    float xMax = 0;
-    float yMax = 0;
-    float zMax = 0;
     for(auto & i : figure){
         if(i[0] > xMax) xMax = i[0];
         if(i[1] > yMax) yMax = i[1];
