@@ -6,8 +6,7 @@
 
 GraphController::GraphController(FigureModel *_model) {
     model = _model;
-    newBasis = model->basis;
-    buffer = model->points;
+    reload();
 }
 
 void GraphController::rotateAbs(float angle) {
@@ -80,7 +79,7 @@ void GraphController::inverseXOY() {
 void GraphController::inverseYOZ() {
     std::vector<std::vector<float>> r = {{0-1, 0, 0, 0},
                                          {0, 1, 0, 0},
-                                         {0, 0, 0, 0},
+                                         {0, 0, 1, 0},
                                          {0, 0, 0, 1}};
 
     for (auto & i : newBasis) {
@@ -93,6 +92,17 @@ void GraphController::inverseZOX() {
                                          {0, 0-1, 0, 0},
                                          {0, 0, 1, 0},
                                          {0, 0, 0, 1}};
+
+    for (auto & i : newBasis) {
+        i = multVecOnMatrix(i, r);
+    }
+}
+
+void GraphController::transfer(float a, float b, float c) {
+    std::vector<std::vector<float>> r = {{1, 0, 0, 0},
+                                         {0, 1, 0, 0},
+                                         {0, 0, 1, 0},
+                                         {a, b, c, 1}};
 
     for (auto & i : newBasis) {
         i = multVecOnMatrix(i, r);
@@ -141,11 +151,11 @@ std::vector<float> GraphController::multMatrixOnVec(std::vector<std::vector<floa
     return res;
 }
 
-std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::vector<float>> input){
+std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::vector<float>> input, int sizeX, int sizeY, float dist){
     std::vector<std::vector<float>> result;
     for(auto & i : input){
-        float mX = model->sizeX / 2 + i[0] * model->dist / (i[3] + model->dist);
-        float mY = model->sizeY / 2 + i[1] * model->dist / (i[3] + model->dist);
+        float mX = (float)sizeX / 2 + i[0] * dist / (i[3] + dist);
+        float mY = (float)sizeY / 2 + i[1] * dist / (i[3] + dist);
         result.push_back(std::vector<float>({mX, mY}));
     }
     return result;

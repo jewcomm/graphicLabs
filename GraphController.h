@@ -9,6 +9,8 @@
 #include <SFML/Graphics.hpp>
 #include "FigureModel.h"
 
+#define BASIS_COORD(coord) 500 + (coord - 500) * 100
+
 class GraphController : protected FigureModel {
 public:
     GraphController(FigureModel *_model);
@@ -20,7 +22,8 @@ public:
 
     std::vector<std::vector<float>> inverseMatrix(std::vector<std::vector<float>> matrix);
 
-    std::vector<std::vector<float>> convert3Dto2D(std::vector<std::vector<float>> input);
+    std::vector<std::vector<float>> convert3Dto2D(std::vector<std::vector<float>> input,
+                                                  int sizeX, int sizeY, float dist);
 
     // multiply vector by matrix
     // vector.size() should be less matrix.size()
@@ -47,9 +50,11 @@ public:
 
     void inverseZOX();
 
+    void transfer(float a, float b, float c);
+
     inline void reload(){
         newBasis = model->basis;
-        buffer = model->points;
+        buffer = model->figure;
     }
 };
 
