@@ -6,9 +6,9 @@ GraphController::GraphController(FigureModel *_model) {
 }
 
 void GraphController::rotateAbs() {
-    if(abs(angleX) > 360) angleX = fmod(angleX , 360);
+    if(fabs(angleX) > 360) angleX = fmod(angleX , 360);
 
-    float sinFI = sinf(angleX * M_PI / 180);
+    auto sinFI = sinf(angleX * M_PI / 180);
     float cosFI = cosf(angleX * M_PI / 180);
     std::vector<std::vector<float>> r = {{1, 0,         0,     0},
                                          {0, cosFI,     sinFI, 0},
@@ -127,7 +127,7 @@ std::vector<float> GraphController::multVecOnMatrix(std::vector<float>v, std::ve
     return res;
 }
 
-std::vector<float> GraphController::multMatrixOnVec(std::vector<std::vector<float>> m, std::vector<float>v){
+__attribute__((unused)) std::vector<float> GraphController::multMatrixOnVec(std::vector<std::vector<float>> m, std::vector<float>v){
     std::vector<float> res;
     int count = 0;
     while(v.size() < m.size()){
@@ -157,7 +157,7 @@ std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::
     return result;
 }
 
-std::vector<std::vector<float>> GraphController::inverseMatrix(std::vector<std::vector<float>> matrix){
+__attribute__((unused)) std::vector<std::vector<float>> GraphController::inverseMatrix(std::vector<std::vector<float>> matrix){
     sf::Transform source(matrix[0][0], matrix[0][1], matrix[0][2],
                          matrix[1][0], matrix[1][1], matrix[1][2],
                          matrix[2][0], matrix[2][1], matrix[2][2]);

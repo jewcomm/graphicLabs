@@ -6,7 +6,7 @@
 
 SFMLView::SFMLView(GraphController *controller) {
     this->controller = controller;
-};
+}
 
 int SFMLView::run() {
     sf::RenderWindow window(sf::VideoMode(sizeX, sizeY), "Labs 1");
@@ -98,8 +98,8 @@ int SFMLView::run() {
             };
             window.draw(line, 2, sf::Lines);
         }
-        if(showAxis) {
-            for (int i = 0; i < currentBasis.size(); i++) {
+
+        if (showAxis) for (int i = 0; i < currentBasis.size(); i++) {
                 sf::Color color;
                 if(i == 0) color = sf::Color::Red;
                 if(i == 1) color = sf::Color::Green;
@@ -112,7 +112,7 @@ int SFMLView::run() {
                 };
                 window.draw(line, 2, sf::Lines);
             }
-        }
+
         window.display();
     }
     return 0;

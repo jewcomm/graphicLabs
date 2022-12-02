@@ -13,7 +13,7 @@
 class SFMLView {
 public:
     GraphController *controller;
-    SFMLView(GraphController *controller);
+    explicit SFMLView(GraphController *controller);
     int run();
 
     int sizeX = 1000;

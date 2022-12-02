@@ -13,7 +13,7 @@
 
 class GraphController {
 public:
-    GraphController(FigureModel *_model);
+    explicit GraphController(FigureModel *_model);
 
     float angleZ = 0;
     float angleX = 0;
@@ -36,7 +36,7 @@ public:
 
     FigureModel *model ;
 
-    std::vector<std::vector<float>> inverseMatrix(std::vector<std::vector<float>> matrix);
+    __attribute__((unused)) std::vector<std::vector<float>> inverseMatrix(std::vector<std::vector<float>> matrix);
 
     std::vector<std::vector<float>> convert3Dto2D(std::vector<std::vector<float>> input,
                                                   int sizeX, int sizeY, float dist);
@@ -47,7 +47,7 @@ public:
 
     // multiply matrix by vector
     // vector.size() should be less matrix.size()
-    std::vector<float> multMatrixOnVec(std::vector<std::vector<float>> m, std::vector<float>v);
+    __attribute__((unused)) std::vector<float> multMatrixOnVec(std::vector<std::vector<float>> m, std::vector<float>v);
 
     // function for rotate on axel applicate
     void rotateApp();
