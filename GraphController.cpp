@@ -1,4 +1,5 @@
 #include "GraphController.h"
+#include <SFML/Graphics.hpp>
 
 GraphController::GraphController(FigureModel *_model) {
     model = _model;
@@ -157,6 +158,13 @@ std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::
     return result;
 }
 
+std::vector<float> GraphController::convert3Dto2D(std::vector<float> input, int sizeX, int sizeY, float dist){
+        float mX = (float)sizeX / 2 + input[0] * dist / (input[3] + dist);
+        float mY = (float)sizeY / 2 + input[1] * dist / (input[3] + dist);
+        std::vector<float> result({mX, mY});
+        return result;
+}
+
 __attribute__((unused)) std::vector<std::vector<float>> GraphController::inverseMatrix(std::vector<std::vector<float>> matrix){
     sf::Transform source(matrix[0][0], matrix[0][1], matrix[0][2],
                          matrix[1][0], matrix[1][1], matrix[1][2],
@@ -189,8 +197,8 @@ __attribute__((unused)) std::vector<std::vector<float>> GraphController::inverse
     return ret;
 }
 
-std::vector<std::vector<float>> GraphController::calcPhysics() {
-    std::vector<std::vector<float>> result;
+std::vector<std::vector<sf::Vertex>> GraphController::calcPhysics(float sizeX, float sizeY, float dist) {
+    std::vector<std::vector<sf::Vertex>> result;
     reload();
     rotateApp();
     rotateOrd();
@@ -201,9 +209,20 @@ std::vector<std::vector<float>> GraphController::calcPhysics() {
     if(invYOZ) inverseYOZ();
     if(invZOX) inverseZOX();
 
-    for (auto & i: buffer){
-        result.push_back(multVecOnMatrix(i, newBasis));
-    }
+    zBufferToOutputBuffer();
 
+    for(auto & i : clearLines ){
+        std::vector<float> p1 = multVecOnMatrix(std::vector<float>({i.p1[0], i.p1[1], i.p1[2]}), newBasis);
+        std::vector<float> p2 = multVecOnMatrix(std::vector<float>({i.p2[0], i.p2[1], i.p2[2]}), newBasis);
+        p1 = convert3Dto2D(p1, sizeX, sizeY, dist);
+        p2 = convert3Dto2D(p2, sizeX, sizeY, dist);
+        sf::Vertex line[] = {
+                sf::Vertex(sf::Vector2f(p1[0], p1[1])),
+                sf::Vertex(sf::Vector2f(p2[0], p2[1]))
+
+        };
+        std::vector<sf::Vertex> t = {line[0], line[1]};
+        result.push_back(t);
+    }
     return result;
 }

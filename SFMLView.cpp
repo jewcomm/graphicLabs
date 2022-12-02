@@ -86,19 +86,20 @@ int SFMLView::run() {
 
         std::vector<std::vector<float>> windowBasis = controller->newBasis;
 
-        std::vector<std::vector<float>> output = controller->calcPhysics();
+        //std::vector<std::vector<float>> output = controller->calcPhysics();
 
-        output = controller->convert3Dto2D(output, sizeX, sizeY, dist);
-        std::vector<std::vector<float>> currentBasis = controller->convert3Dto2D(controller->newBasis, sizeX, sizeY, dist);
+        //output = controller->convert3Dto2D(output, sizeX, sizeY, dist);
 
-        for (int i = 0; i < output.size() - 1; i++){
+        std::vector<std::vector<sf::Vertex>> output = controller->calcPhysics(sizeX, sizeY, dist);
+
+        for(int i = 0; i < output.size(); i++){
             sf::Vertex line[] = {
-                    sf::Vertex(sf::Vector2f(output[i][0], output[i][1])),
-                    sf::Vertex(sf::Vector2f(output[i + 1][0], output[i + 1][1])),
+                    output[i][0], output[i][1]
             };
             window.draw(line, 2, sf::Lines);
         }
 
+        std::vector<std::vector<float>> currentBasis = controller->convert3Dto2D(controller->newBasis, sizeX, sizeY, dist);
         if (showAxis) for (int i = 0; i < currentBasis.size(); i++) {
                 sf::Color color;
                 if(i == 0) color = sf::Color::Red;
