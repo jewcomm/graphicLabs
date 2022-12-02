@@ -11,9 +11,25 @@
 
 #define BASIS_COORD(coord) 500 + (coord - 500) * 100
 
-class GraphController : protected FigureModel {
+class GraphController {
 public:
     GraphController(FigureModel *_model);
+
+    float angleZ = 0;
+    float angleX = 0;
+    float angleY = 0;
+
+    float dilationX = 1;
+    float dilationY = 1;
+    float dilationZ = 1;
+
+    float transfX = 0;
+    float transfY = 0;
+    float transfZ = 0;
+
+    bool invXOY = false;
+    bool invYOZ = false;
+    bool invZOX = false;
 
     std::vector<std::vector<float>> buffer;
     std::vector<std::vector<float>> newBasis;
@@ -34,15 +50,15 @@ public:
     std::vector<float> multMatrixOnVec(std::vector<std::vector<float>> m, std::vector<float>v);
 
     // function for rotate on axel applicate
-    void rotateApp(float angle);
+    void rotateApp();
 
     // function for rotate on axel abscissa
-    void rotateAbs(float angle);
+    void rotateAbs();
 
     // function for rotate on axel ordinate
-    void rotateOrd(float angle);
+    void rotateOrd();
 
-    void comprStret(float a, float b, float c);
+    void comprStret();
 
     void inverseXOY();
 
@@ -50,12 +66,21 @@ public:
 
     void inverseZOX();
 
-    void transfer(float a, float b, float c);
+    void transfer();
 
     inline void reload(){
         newBasis = model->basis;
         buffer = model->figure;
     }
+
+    inline void clear(){
+        angleX = angleY = angleZ = 0;
+        dilationX = dilationY = dilationZ = 1;
+        transfX = transfY = transfZ = 0;
+        invZOX = invYOZ = invXOY = false;
+    }
+
+    std::vector<std::vector<float>> calcPhysics();
 };
 
 

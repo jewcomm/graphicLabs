@@ -1,7 +1,3 @@
-//
-// Created by alexu on 18.11.2022.
-//
-
 #include "GraphController.h"
 
 GraphController::GraphController(FigureModel *_model) {
@@ -9,11 +5,11 @@ GraphController::GraphController(FigureModel *_model) {
     reload();
 }
 
-void GraphController::rotateAbs(float angle) {
-    if(abs(angle) > 360) angle = fmod(angle , 360);
+void GraphController::rotateAbs() {
+    if(abs(angleX) > 360) angleX = fmod(angleX , 360);
 
-    float sinFI = sinf(angle * M_PI / 180);
-    float cosFI = cosf(angle * M_PI / 180);
+    float sinFI = sinf(angleX * M_PI / 180);
+    float cosFI = cosf(angleX * M_PI / 180);
     std::vector<std::vector<float>> r = {{1, 0,         0,     0},
                                          {0, cosFI,     sinFI, 0},
                                          {0, 0 - sinFI, cosFI, 0},
@@ -24,11 +20,11 @@ void GraphController::rotateAbs(float angle) {
     }
 }
 
-void GraphController::rotateApp(float angle){
-    if(abs(angle) > 360) angle = fmod(angle , 360);
+void GraphController::rotateApp(){
+    if(fabs(angleZ) > 360) angleZ = fmod(angleZ , 360.0);
 
-    float sinFI = sinf(angle * M_PI / 180);
-    float cosFI = cosf(angle * M_PI / 180);
+    float sinFI = sinf(angleZ * M_PI / 180);
+    float cosFI = cosf(angleZ * M_PI / 180);
     std::vector<std::vector<float>> r = {{cosFI, sinFI, 0, 0},
                                         {0-sinFI, cosFI, 0, 0},
                                         {0, 0, 1, 0},
@@ -39,11 +35,11 @@ void GraphController::rotateApp(float angle){
     }
 }
 
-void GraphController::rotateOrd(float angle){
-    if(abs(angle) > 360) angle = fmod(angle , 360);
+void GraphController::rotateOrd(){
+    if(abs(angleY) > 360) angleY = fmod(angleY , 360);
 
-    float sinFI = sinf(angle * M_PI / 180);
-    float cosFI = cosf(angle * M_PI / 180);
+    float sinFI = sinf(angleY * M_PI / 180);
+    float cosFI = cosf(angleY * M_PI / 180);
     std::vector<std::vector<float>> r = {{cosFI, 0, 0-sinFI, 0},
                                         {0, 1, 0, 0},
                                         {sinFI, 0, cosFI, 0},
@@ -54,10 +50,10 @@ void GraphController::rotateOrd(float angle){
     }
 }
 
-void GraphController::comprStret(float a, float b, float c) {
-    std::vector<std::vector<float>> r = {{a, 0, 0, 0},
-                                         {0, b, 0, 0},
-                                         {0, 0, c, 0},
+void GraphController::comprStret() {
+    std::vector<std::vector<float>> r = {{dilationX, 0, 0, 0},
+                                         {0, dilationY, 0, 0},
+                                         {0, 0, dilationZ, 0},
                                          {0, 0, 0, 1}};
 
     for (auto & i: newBasis) {
@@ -98,11 +94,11 @@ void GraphController::inverseZOX() {
     }
 }
 
-void GraphController::transfer(float a, float b, float c) {
+void GraphController::transfer() {
     std::vector<std::vector<float>> r = {{1, 0, 0, 0},
                                          {0, 1, 0, 0},
                                          {0, 0, 1, 0},
-                                         {a, b, c, 1}};
+                                         {transfX, transfY, transfZ, 1}};
 
     for (auto & i : newBasis) {
         i = multVecOnMatrix(i, r);
@@ -191,4 +187,23 @@ std::vector<std::vector<float>> GraphController::inverseMatrix(std::vector<std::
     }
 
     return ret;
+}
+
+std::vector<std::vector<float>> GraphController::calcPhysics() {
+    std::vector<std::vector<float>> result;
+    reload();
+    rotateApp();
+    rotateOrd();
+    rotateAbs();
+    comprStret();
+    transfer();
+    if(invXOY) inverseXOY();
+    if(invYOZ) inverseYOZ();
+    if(invZOX) inverseZOX();
+
+    for (auto & i: buffer){
+        result.push_back(multVecOnMatrix(i, newBasis));
+    }
+
+    return result;
 }
