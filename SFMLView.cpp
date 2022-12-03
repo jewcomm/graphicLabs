@@ -123,23 +123,24 @@ int SFMLView::run() {
                 window.draw(line, 2, sf::Lines);
             }
 
-//        sf::Image zBuffer;
-//        zBuffer.create(controller->zBufferXSize, controller->zBufferYSize, sf::Color::Black);
-//        for (int i = 0; i < controller->ZBuffer.size(); i++)
-//        {
-//            for(int j = 0; j < controller->ZBuffer[i].size(); j++){
-//                zBuffer.setPixel(i, j, sf::Color::White);
-//            }
-//        }
-//
-//        sf::Texture zTexture;
-//        sf::Sprite zSprite;
-//        if(zTexture.loadFromImage(zBuffer)) {
-//            if (zTexture.create(controller->zBufferXSize, controller->zBufferYSize)) {
-//                zSprite.setTexture(zTexture);
-//                window.draw(zSprite);
-//            }
-//        }
+        sf::Image zBuffer;
+        zBuffer.create(controller->zBufferXSize, controller->zBufferYSize, sf::Color::White);
+        for (int i = 0; i < controller->zBufferXSize; i++)
+        {
+            for(int j = 0; j < controller->zBufferYSize; j++){
+                zBuffer.setPixel(i, j, sf::Color::White);
+            }
+        }
+
+        sf::Texture zTexture;
+        sf::Sprite zSprite;
+        if(zTexture.loadFromImage(zBuffer)) {
+            if (zTexture.create(controller->zBufferXSize, controller->zBufferYSize)) {
+                zSprite.setTexture(zTexture, true);
+                zSprite.setColor(sf::Color::White);
+                window.draw(zSprite);
+            }
+        }
 
         window.display();
     }
