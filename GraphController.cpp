@@ -151,7 +151,7 @@ __attribute__((unused)) std::vector<float> GraphController::multMatrixOnVec(std:
 std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::vector<float>> input, int sizeX, int sizeY, float dist){
     std::vector<std::vector<float>> result;
     for(auto & i : input){
-        float mX = (float)sizeX / 2 + i[0] * dist / (i[3] + dist);
+        float mX = (float)sizeX / 4 + i[0] * dist / (i[3] + dist);
         float mY = (float)sizeY / 2 + i[1] * dist / (i[3] + dist);
         result.push_back(std::vector<float>({mX, mY}));
     }
@@ -159,7 +159,7 @@ std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::
 }
 
 std::vector<float> GraphController::convert3Dto2D(std::vector<float> input, int sizeX, int sizeY, float dist){
-        float mX = (float)sizeX / 2 + input[0] * dist / (input[3] + dist);
+        float mX = (float)sizeX / 4 + input[0] * dist / (input[3] + dist);
         float mY = (float)sizeY / 2 + input[1] * dist / (input[3] + dist);
         std::vector<float> result({mX, mY});
         return result;
@@ -209,13 +209,13 @@ std::vector<std::vector<sf::Vertex>> GraphController::calcPhysics(float sizeX, f
     if(invYOZ) inverseYOZ();
     if(invZOX) inverseZOX();
 
-    zBufferToOutputBuffer();
+    get3dWithDepth(sizeX, sizeY, dist);
+
+    clearDuplicates();
 
     for(auto & i : clearLines ){
-        std::vector<float> p1 = multVecOnMatrix(std::vector<float>({i.p1[0], i.p1[1], i.p1[2]}), newBasis);
-        std::vector<float> p2 = multVecOnMatrix(std::vector<float>({i.p2[0], i.p2[1], i.p2[2]}), newBasis);
-        p1 = convert3Dto2D(p1, sizeX, sizeY, dist);
-        p2 = convert3Dto2D(p2, sizeX, sizeY, dist);
+        std::vector<float> p1 = std::vector<float>({i.p1[0], i.p1[1], i.p1[2]});
+        std::vector<float> p2 = std::vector<float>({i.p2[0], i.p2[1], i.p2[2]});
         sf::Vertex line[] = {
                 sf::Vertex(sf::Vector2f(p1[0], p1[1])),
                 sf::Vertex(sf::Vector2f(p2[0], p2[1]))

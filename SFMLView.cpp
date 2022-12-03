@@ -20,6 +20,8 @@ int SFMLView::run() {
     sf::Time yozDelayTime = clock.getElapsedTime();
     sf::Time zoxDelayTime = clock.getElapsedTime();
 
+    sf::Time borderDelayTime = clock.getElapsedTime();
+
     while (window.isOpen()){
         sf::Event event{};
         while (window.pollEvent(event))
@@ -82,6 +84,13 @@ int SFMLView::run() {
             }
         }
 
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::O)) {
+            if(clock.getElapsedTime() - borderDelayTime > sf::milliseconds(500)){
+                controller->showBorder = !controller->showBorder;
+                borderDelayTime = clock.getElapsedTime();
+            }
+        }
+
         window.clear();
 
         std::vector<std::vector<float>> windowBasis = controller->newBasis;
@@ -107,12 +116,30 @@ int SFMLView::run() {
                 if(i == 2) color = sf::Color::Blue;
 
                 sf::Vertex line[] = {
-                        sf::Vertex(sf::Vector2f(500 + controller->dilationX, 500 + controller->dilationY), color),
-                        sf::Vertex(sf::Vector2f(BASIS_COORD(currentBasis[i][0]) + controller->dilationX,
-                                                BASIS_COORD(currentBasis[i][1]) + controller->dilationY), color),
+                        sf::Vertex(sf::Vector2f(sizeX / 4 + controller->dilationX, 500 + controller->dilationY), color),
+                        sf::Vertex(sf::Vector2f(BASIS_COORD(currentBasis[i][0], sizeX / 2) + controller->dilationX,
+                                                BASIS_COORD(currentBasis[i][1], sizeY) + controller->dilationY), color),
                 };
                 window.draw(line, 2, sf::Lines);
             }
+
+//        sf::Image zBuffer;
+//        zBuffer.create(controller->zBufferXSize, controller->zBufferYSize, sf::Color::Black);
+//        for (int i = 0; i < controller->ZBuffer.size(); i++)
+//        {
+//            for(int j = 0; j < controller->ZBuffer[i].size(); j++){
+//                zBuffer.setPixel(i, j, sf::Color::White);
+//            }
+//        }
+//
+//        sf::Texture zTexture;
+//        sf::Sprite zSprite;
+//        if(zTexture.loadFromImage(zBuffer)) {
+//            if (zTexture.create(controller->zBufferXSize, controller->zBufferYSize)) {
+//                zSprite.setTexture(zTexture);
+//                window.draw(zSprite);
+//            }
+//        }
 
         window.display();
     }

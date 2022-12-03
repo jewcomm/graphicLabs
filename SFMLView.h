@@ -16,7 +16,7 @@ public:
     explicit SFMLView(GraphController *controller);
     int run();
 
-    int sizeX = 1000;
+    int sizeX = 1600;
     int sizeY = 1000;
 
     // imaginary distance between figure and point (0, 0, 0)

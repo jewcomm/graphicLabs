@@ -83,17 +83,13 @@ public:
         inline bool operator==(const myLine& s){
             return (this->p1[0] == s.p1[0] &&
                     this->p1[1] == s.p1[1] &&
-                    this->p1[2] == s.p1[2] &&
                     this->p2[0] == s.p2[0] &&
-                    this->p2[1] == s.p2[1] &&
-                    this->p2[2] == s.p2[2]
+                    this->p2[1] == s.p2[1]
                     ||
                     this->p2[0] == s.p1[0] &&
                     this->p2[1] == s.p1[1] &&
-                    this->p2[2] == s.p1[2] &&
                     this->p1[0] == s.p2[0] &&
-                    this->p1[1] == s.p2[1] &&
-                    this->p1[2] == s.p2[2] );
+                    this->p1[1] == s.p2[1]);
         }
     };
 
