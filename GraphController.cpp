@@ -152,7 +152,7 @@ __attribute__((unused)) std::vector<float> GraphController::multMatrixOnVec(std:
 std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::vector<float>> input, float sizeX, float sizeY, float dist){
     std::vector<std::vector<float>> result;
     for(auto & i : input){
-        float mX = (float)sizeX / 4 + i[0] * dist / (i[2] + dist);
+        float mX = (float)sizeX / 2 + i[0] * dist / (i[2] + dist);
         float mY = (float)sizeY / 2 + i[1] * dist / (i[2] + dist);
         result.push_back(std::vector<float>({mX, mY, i[2]}));
     }

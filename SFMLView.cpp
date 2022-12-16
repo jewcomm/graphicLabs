@@ -102,9 +102,9 @@ int SFMLView::run() {
                 if(i == 2) color = sf::Color::Blue;
 
                 sf::Vertex line[] = {
-                        sf::Vertex(sf::Vector2f((float)sizeX / 2 + controller->dilationX, 500 + controller->dilationY), color),
-                        sf::Vertex(sf::Vector2f(BASIS_COORD(currentBasis[i][0], (float)sizeX / 2) + controller->dilationX,
-                                                BASIS_COORD(currentBasis[i][1], (float)sizeY) + controller->dilationY), color),
+                        sf::Vertex(sf::Vector2f((float)sizeX / 2 + controller->dilationX, sizeY / 2 + controller->dilationY), color),
+                        sf::Vertex(sf::Vector2f(BASIS_COORD(currentBasis[i][0], sizeX) + controller->dilationX,
+                                                BASIS_COORD(currentBasis[i][1], sizeY) + controller->dilationY), color),
                 };
                 window.draw(line, 2, sf::Lines);
             }
