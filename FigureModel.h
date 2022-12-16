@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <iterator>
+#include <SFML/Graphics/Color.hpp>
 
 class FigureModel {
 private:
@@ -50,35 +51,21 @@ private:
             {0,     100,    0}
         }
     };
-//    std::vector<std::vector<float>> figureWithoutC = {
-//            //X     Y       Z
-//            {100,   0,      0},
-//            {100,   100,    0},
-//            {0,     100,    0},
-//            {0,     0,      0},
-//            {100,   0,      0},
-//            {0,     0,      0},
-//
-//            {0,     0,      100},
-//            {0,     100,    100},
-//            {100,   100,    100},
-//            {100,   0,      100},
-//            {0,     0,      100},
-//            {100,   0,      100},
-//
-//            {100,   0,      0},
-//            {100,   100,    0},
-//            {100,   100,    100},
-//            {0,     100,    100},
-//            {0,     100,    0},
-//            {0,     0,      0},
-//            {0,     0,      100}
-//    };
+
+    std::vector<sf::Color> colors = {
+            sf::Color::Red,
+            sf::Color::White,
+            sf::Color::Green,
+            sf::Color::Blue,
+            sf::Color::Yellow,
+            sf::Color::Magenta
+    };
 
 public:
     struct myLine {
-        float p1[3];
-        float p2[3];
+        float p1[3]{};
+        float p2[3]{};
+        sf::Color color;
 
         inline bool operator==(const myLine& s){
             return (this->p1[0] == s.p1[0] &&
@@ -92,12 +79,6 @@ public:
                     this->p1[1] == s.p2[1]);
         }
     };
-
-
-
-    // with center
-//    std::vector<std::vector<float>> figure;
-    std::vector<std::vector<std::vector<float>>> figure;
 
     std::vector<std::vector<myLine>> figureLines;
 

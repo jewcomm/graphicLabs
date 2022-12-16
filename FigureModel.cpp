@@ -24,16 +24,21 @@ FigureModel::FigureModel() {
 //                                            i[1] - yMax,
 //                                            i[2] - zMax}));
 //    }
+
+    int c = 0;
     for(auto & j : figureWithoutC){
         std::vector<myLine> temp;
+        // centered coords
         temp.push_back(myLine{
                 {j.back()[0] - xMax,
                  j.back()[1] - yMax,
                  j.back()[2] - zMax},
                 {j.front()[0] - xMax,
                  j.front()[1] - yMax,
-                 j.front()[2] - zMax}
+                 j.front()[2] - zMax},
+                 colors[c]
         });
+
         for (auto & i : j){
             if(i == j.back()) break;
             auto next = std::next(&i, 1);
@@ -46,8 +51,11 @@ FigureModel::FigureModel() {
                 {(*next)[0] - xMax,
                     (*next)[1] - yMax,
                     (*next)[2] - zMax
-                }});
+                },
+                colors[c]});
         }
+
         figureLines.push_back(temp);
+        c++;
     }
 }

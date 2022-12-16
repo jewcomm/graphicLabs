@@ -1,5 +1,6 @@
 #include "GraphController.h"
 #include <SFML/Graphics.hpp>
+#include <cmath>
 
 GraphController::GraphController(FigureModel *_model) {
     model = _model;
@@ -7,7 +8,7 @@ GraphController::GraphController(FigureModel *_model) {
 }
 
 void GraphController::rotateAbs() {
-    if(fabs(angleX) > 360) angleX = fmod(angleX , 360);
+    if(std::fabs(angleX) > 360) angleX = fmod(angleX , 360);
 
     auto sinFI = sinf(angleX * M_PI / 180);
     float cosFI = cosf(angleX * M_PI / 180);
@@ -148,20 +149,20 @@ __attribute__((unused)) std::vector<float> GraphController::multMatrixOnVec(std:
     return res;
 }
 
-std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::vector<float>> input, int sizeX, int sizeY, float dist){
+std::vector<std::vector<float>> GraphController::convert3Dto2D(std::vector<std::vector<float>> input, float sizeX, float sizeY, float dist){
     std::vector<std::vector<float>> result;
     for(auto & i : input){
-        float mX = (float)sizeX / 4 + i[0] * dist / (i[3] + dist);
-        float mY = (float)sizeY / 2 + i[1] * dist / (i[3] + dist);
-        result.push_back(std::vector<float>({mX, mY}));
+        float mX = (float)sizeX / 4 + i[0] * dist / (i[2] + dist);
+        float mY = (float)sizeY / 2 + i[1] * dist / (i[2] + dist);
+        result.push_back(std::vector<float>({mX, mY, i[2]}));
     }
     return result;
 }
 
-std::vector<float> GraphController::convert3Dto2D(std::vector<float> input, int sizeX, int sizeY, float dist){
-        float mX = (float)sizeX / 4 + input[0] * dist / (input[3] + dist);
-        float mY = (float)sizeY / 2 + input[1] * dist / (input[3] + dist);
-        std::vector<float> result({mX, mY});
+std::vector<float> GraphController::convert3Dto2D(std::vector<float> input, float sizeX, float sizeY, float dist){
+        float mX = (float)sizeX / 2 + input[0] * dist / (input[2] + dist);
+        float mY = (float)sizeY / 2 + input[1] * dist / (input[2] + dist);
+        std::vector<float> result({mX, mY, input[2]});
         return result;
 }
 
@@ -197,7 +198,7 @@ __attribute__((unused)) std::vector<std::vector<float>> GraphController::inverse
     return ret;
 }
 
-std::vector<std::vector<sf::Vertex>> GraphController::calcPhysics(float sizeX, float sizeY, float dist) {
+__attribute__((unused)) std::vector<std::vector<sf::Vertex>> GraphController::calcPhysics(float sizeX, float sizeY, float dist) {
     std::vector<std::vector<sf::Vertex>> result;
     reload();
     rotateApp();
@@ -224,5 +225,60 @@ std::vector<std::vector<sf::Vertex>> GraphController::calcPhysics(float sizeX, f
         std::vector<sf::Vertex> t = {line[0], line[1]};
         result.push_back(t);
     }
+    return result;
+}
+
+std::vector<sf::ConvexShape> GraphController::calcPhysiscPoligon(float sizeX, float sizeY, float dist) {
+    std::vector<sf::ConvexShape> result;
+    reload();
+    rotateApp();
+    rotateOrd();
+    rotateAbs();
+    comprStret();
+    transfer();
+    if(invXOY) inverseXOY();
+    if(invYOZ) inverseYOZ();
+    if(invZOX) inverseZOX();
+
+    get3dWithDepth(sizeX, sizeY, dist);
+
+    std::vector<std::pair<std::vector<myLine>, float>> polWithDepthSum;
+
+    for(auto & i : linesWithDuplicate) {
+        float sum = 0;
+        for(auto & j : i){
+            sum += j.p1[2];
+        }
+        auto t = std::make_pair(i, sum);
+        polWithDepthSum.push_back(t);
+    }
+
+    std::sort(polWithDepthSum.begin(), polWithDepthSum.end(), [](auto &left, auto &right){
+       return left.second > right.second;
+    });
+
+    int t = 0;
+    for(auto & i : polWithDepthSum) {
+        sf::ConvexShape convex;
+        convex.setPointCount(i.first.size());
+        for(int j = 0; j < i.first.size(); j++){
+            convex.setPoint(j, sf::Vector2f(i.first[j].p1[0], i.first[j].p1[1]));
+        }
+        convex.setFillColor(i.first[0].color);
+        result.push_back(convex);
+        t++;
+    }
+
+//    for(auto & i : linesWithDuplicate) {
+//        sf::ConvexShape convex;
+//        convex.setPointCount(i.size());
+//        for(int j = 0; j < i.size(); j++){
+//            convex.setPoint(j, sf::Vector2f(i[j].p1[0], i[j].p1[1]));
+//        }
+//        convex.setFillColor(colors[t]);
+//        result.push_back(convex);
+//        t++;
+//    }
+
     return result;
 }

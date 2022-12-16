@@ -5,7 +5,6 @@
 int main()
 {
     FigureModel * model = new FigureModel();
-
     GraphController * controller = new GraphController(model);
     SFMLView view(controller);
 

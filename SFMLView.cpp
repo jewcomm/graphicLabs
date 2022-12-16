@@ -36,7 +36,7 @@ int SFMLView::run() {
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) controller->angleZ -= 0.5;
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) controller->dilationX /= 1.001;
             else if(sf::Keyboard::isKeyPressed(sf::Keyboard::B)) controller->dilationY /= 1.001;
-            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::C)) controller->dilationZ /= 1.1;
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::C)) controller->dilationZ /= 1.01;
         }
         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)) {
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)){
@@ -68,7 +68,7 @@ int SFMLView::run() {
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) controller->angleZ += 0.5;
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) controller->dilationX *= 1.001;
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) controller->dilationY *= 1.001;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) controller->dilationZ *= 1.1;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) controller->dilationZ *= 1.01;
 
         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) controller->transfY -= 1;
         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) controller->transfX -= 1;
@@ -84,31 +84,17 @@ int SFMLView::run() {
             }
         }
 
-        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::O)) {
-            if(clock.getElapsedTime() - borderDelayTime > sf::milliseconds(500)){
-                controller->showBorder = !controller->showBorder;
-                borderDelayTime = clock.getElapsedTime();
-            }
-        }
-
         window.clear();
 
         std::vector<std::vector<float>> windowBasis = controller->newBasis;
 
-        //std::vector<std::vector<float>> output = controller->calcPhysics();
+        std::vector<sf::ConvexShape> shapes = controller->calcPhysiscPoligon((float)sizeX, (float)sizeY, dist);
 
-        //output = controller->convert3Dto2D(output, sizeX, sizeY, dist);
-
-        std::vector<std::vector<sf::Vertex>> output = controller->calcPhysics(sizeX, sizeY, dist);
-
-        for(int i = 0; i < output.size(); i++){
-            sf::Vertex line[] = {
-                    output[i][0], output[i][1]
-            };
-            window.draw(line, 2, sf::Lines);
+        for(auto & i : shapes){
+            window.draw(i);
         }
 
-        std::vector<std::vector<float>> currentBasis = controller->convert3Dto2D(controller->newBasis, sizeX, sizeY, dist);
+        std::vector<std::vector<float>> currentBasis = controller->convert3Dto2D(controller->newBasis, (float)sizeX, (float)sizeY, dist);
         if (showAxis) for (int i = 0; i < currentBasis.size(); i++) {
                 sf::Color color;
                 if(i == 0) color = sf::Color::Red;
@@ -116,31 +102,12 @@ int SFMLView::run() {
                 if(i == 2) color = sf::Color::Blue;
 
                 sf::Vertex line[] = {
-                        sf::Vertex(sf::Vector2f(sizeX / 4 + controller->dilationX, 500 + controller->dilationY), color),
-                        sf::Vertex(sf::Vector2f(BASIS_COORD(currentBasis[i][0], sizeX / 2) + controller->dilationX,
-                                                BASIS_COORD(currentBasis[i][1], sizeY) + controller->dilationY), color),
+                        sf::Vertex(sf::Vector2f((float)sizeX / 2 + controller->dilationX, 500 + controller->dilationY), color),
+                        sf::Vertex(sf::Vector2f(BASIS_COORD(currentBasis[i][0], (float)sizeX / 2) + controller->dilationX,
+                                                BASIS_COORD(currentBasis[i][1], (float)sizeY) + controller->dilationY), color),
                 };
                 window.draw(line, 2, sf::Lines);
             }
-
-        sf::Image zBuffer;
-        zBuffer.create(controller->zBufferXSize, controller->zBufferYSize, sf::Color::White);
-        for (int i = 0; i < controller->zBufferXSize; i++)
-        {
-            for(int j = 0; j < controller->zBufferYSize; j++){
-                zBuffer.setPixel(i, j, sf::Color::White);
-            }
-        }
-
-        sf::Texture zTexture;
-        sf::Sprite zSprite;
-        if(zTexture.loadFromImage(zBuffer)) {
-            if (zTexture.create(controller->zBufferXSize, controller->zBufferYSize)) {
-                zSprite.setTexture(zTexture, true);
-                zSprite.setColor(sf::Color::White);
-                window.draw(zSprite);
-            }
-        }
 
         window.display();
     }

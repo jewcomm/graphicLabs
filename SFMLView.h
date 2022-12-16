@@ -20,7 +20,7 @@ public:
     int sizeY = 1000;
 
     // imaginary distance between figure and point (0, 0, 0)
-    float dist = 1000;
+    float dist = 10000;
 
 private:
 };
